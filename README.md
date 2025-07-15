@@ -329,3 +329,137 @@ elif 뒤에 조건이 없거나 구문 오류가 있어.
 > `GPIO.setup` = 출력핀 선언
 > `GPIO.output` = 릴레이 ON/OFF 제어
 > `GPIO.cleanup` = 마무리 정리
+
+네ㅐ가 원하는 색깔 5
+LED - 를 릴레이에 NO, 릴레이 COM을 라즈베리 GND
+
+<hr>
+
+# 🎯 Raspberry Pi - 스위치로 LED 제어 연습
+- 스위치를 눌렀다가 뗐을때 led가 켜졌다 꺼지도록 제어
+- 특수 핀으로 인한 led가 꺼지지 않는 문제를 경험
+> [▶️ 시연 영상 보기]()
+
+🛠️ 사용한 하드웨어
+- Raspberry Pi
+- RGB LED 모듈
+- 점퍼선
+- 브레드보드
+
+## ✅ 1. GPIO 기본 개념
+
+#### ✔️ GPIO란?
+
+- **G**eneral **P**urpose **I**nput **O**utput (범용 입출력 핀)  
+- HIGH (3.3V) / LOW (0V) 신호 출력 가능
+
+#### ✔️ Pull-up / Pull-down ⚡
+
+- **Pull-up** 🔼
+  - 기본 HIGH 상태 유지
+  - 신호가 GND로 떨어질 때만 LOW로 변함
+- **Pull-down** 🔽
+  - 기본 LOW 상태 유지
+  - 신호가 HIGH로 올라갈 때만 HIGH로 변함
+
+> 💡 **Tip:** 풀업/풀다운 저항은 스위치 떨림 방지 (채터링 방지)에 필수!
+
+## ✅ GPIO 이벤트 감지와 콜백 함수
+
+### 🤔 Polling vs Event
+
+| 구분      | Polling 방식             | Event 방식                   |
+|-----------|--------------------------|-----------------------------|
+| 동작 방식 | 상태를 반복적으로 읽음   | 이벤트 발생 시 콜백 호출    |
+| CPU 점유율| 높음                     | 낮음                        |
+| 코드 구조 | 복잡해질 수 있음         | 간단하고 효율적             |
+
+
+
+
+#### 🚨 GPIO의 특별한 핀들 (주의할 핀)
+
+다음 핀들은 **특수 기능**이 있어, GPIO로 쓸 때 예상치 못한 동작이 일어날 수 있다
+
+| ⚙️ GPIO | Pin No | 기본 기능         | 주의사항                        |
+|---------|--------|-------------------|---------------------------------|
+| GPIO2   | 3      | I2C1 SDA          | 기본 Pull-up HIGH               |
+| GPIO3   | 5      | I2C1 SCL          | 기본 Pull-up HIGH               |
+| GPIO14  | 8      | UART TXD          | 부팅 시 메시지 출력될 수 있음    |
+| GPIO15  | 10     | UART RXD          | 외부 신호 영향 가능             |
+| GPIO0   | 27     | ID_SD (EEPROM)    | HAT EEPROM 통신용               |
+| GPIO1   | 28     | ID_SC (EEPROM)    | HAT EEPROM 통신용               |
+
+> ✅ **Tip:** 안전하게 GPIO4, GPIO17, GPIO27, GPIO22 등을 사용하면 문제 발생 확률이 낮음
+
+
+### 🔔 콜백 함수란?
+
+- GPIO 핀에서 신호 변화가 생기면 **자동 호출**되는 함수
+- 예) 스위치 누르면 LED 켜기
+
+```python
+def printcallback(channel):
+    print("pushed")
+    GPIO.output(ledPin, GPIO.HIGH)
+    time.sleep(0.5)
+    GPIO.output(ledPin, GPIO.LOW)
+```
+- channel 
+    - 이벤트가 발생한 핀 번호가 자동으로 인자값으로 전달됨
+- LED를 0.5초간 켰다 끄는 기능 수행
+
+#### ✅ add_event_detect()
+```python
+GPIO.add_event_detect(swPin, GPIO.RISING, callback=printcallback, bouncetime=100)
+```
+## 2. 콜백제어 코드 💻
+[전체 코드 보기 click](./source/day6/interrupt.py)
+> **핵심 요약**
+> **wPin** → 감지할 GPIO 핀 번호
+> **GPIO.RISING** → LOW → HIGH로 변할 때 이벤트 발생
+> **callback** → 이벤트 발생 시 호출할 함수
+> **bouncetime** → 채터링 방지 시간 (ms)
+>📝 Tip: bouncetime을 설정하지 않으면 스위치를 한 번 눌러도 여러 번 감지될 수 있습니다.
+
+
+### 3. ✅ 오늘 겪은 문제와 해결 과정
+### ⚠️ 문제 상황
+
+ GPIO3 (핀 5)에 LED 연결했더니
+ 1. 아무 코드 안 돌려도 불이 들어옴 💡
+
+ 2. 프로그램 종료 후에도 LED가 꺼지지 않음 ❌
+ 
+ 3. 코드 오타 → AttributeError 발생 🔎
+
+ 4. RGB 모듈 핀 배치가 PCB와 다름:
+    R 단자에 연결했는데 파란 불이 들어옴 🔵
+
+### 💥 원인
+
+1. GPIO3는 I2C SDA 핀 → 기본 Pull-up HIGH
+    cleanup 후에도 HIGH로 돌아감
+2. 오타는 `setup`이 정답
+3. RGB 모듈은 제조사마다 핀 배치가 다를 수 있음
+
+### ✅ 해결 과정
+
+1. GPIO15로 핀 변경 → 정상 작동 확인 👍
+2. 프로그램 종료 시 LED를 LOW로 출력 후 INPUT 모드로 변경 🔌
+3. 코드 오타 수정
+4. RGB 모듈 각 단자에 전류 흘려 색상 직접 확인 🎨
+
+### 4. 추천 안전 GPIO 리스트 🛡️
+| 🛡️ GPIO | 🔢 Pin No |
+|---------|-----------|
+| GPIO4   | 7         |
+| GPIO17  | 11        |
+| GPIO27  | 13        |
+| GPIO22  | 15        |
+| GPIO5   | 29        |
+| GPIO6   | 31        |
+| GPIO13  | 33        |
+| GPIO19  | 35        |
+| GPIO26  | 37        |
+> ✅ Tip: GPIO3, GPIO2, UART 핀은 피해서 쓰는 것이 안전
