@@ -252,9 +252,7 @@ elif 뒤에 조건이 없거나 구문 오류가 있어.
 
 ## 6일차
 # ✅ Raspberry Pi Relay Practice with LED
-> [▶️ 시연 영상 보기]
-
-https://github.com/user-attachments/assets/72c32a6b-cf24-4ce3-9890-5e6d901c46c3
+> [▶️ 시연 영상 보기](https://github.com/user-attachments/assets/72c32a6b-cf24-4ce3-9890-5e6d901c46c3)
 
 
 라즈베리파이를 이용해 릴레이로 LED를 제어한 프로젝트 기록
