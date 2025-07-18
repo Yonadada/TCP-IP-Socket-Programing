@@ -522,7 +522,7 @@ GPIO.add_event_detect(swPin, GPIO.RISING, callback=printcallback, bouncetime=100
 - 하나의 라우트로 on, off 둘 다 처리
 - 방식 2 코드가 더 유연하고 확장성이 있다 
 #### 📸 실행 화면
-- [실행영상]()
+- [실행영상](https://github.com/user-attachments/assets/1df40ed8-f72d-45be-a964-4a077d59d49a)
 
 
 ####  하고자 하는 기능 정리
