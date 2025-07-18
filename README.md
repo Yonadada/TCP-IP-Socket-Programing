@@ -467,3 +467,76 @@ GPIO.add_event_detect(swPin, GPIO.RISING, callback=printcallback, bouncetime=100
 | GPIO19  | 35        |
 | GPIO26  | 37        |
 > ✅ Tip: GPIO3, GPIO2, UART 핀은 피해서 쓰는 것이 안전
+
+<hr>
+
+# 7일차
+
+## 1. Flask 웹 서버 실습 #1 - 간단한 라우팅
+- [결과]
+    <img src="/img/app1.png" width="350">
+- [코드](/source/day7/appTest.py.py)
+> **핵심 포인트**
+> - Flask는 @app.route() 통해 URL 라우팅을 설정한다
+> - host:"0.0.0.0" 설정을 통해 다른 디바이스에서도 웹 서버 접근이 가능하다
+> - HTML이 아닌 문자열만 리턴해도 웹 페이지로 동작한다
+
+## 2. Flask 웹 서버 실습 #2 - 요청 파라미터 GET 방식 처리
+- [결과]
+<img src="/img/appTest2.png" width="350">
+
+- [코드](/source/day7/appTest2.py)
+>**핵심 포인트**
+> *request.args.get('key', 'default')* 를 통해서 값을 쉽게 받을 수 있다
+> 파라미터가 없을 경우 기본값을 지정할 수 있어서 예외처리가 용이
+> ?key=value 형태로 브라우저 주소창에서 테스트 가능 
+
+## 3. 📘 웹 서버 실습 #3 
+- Python의 **Flask** 프레임워크를 사용한 간단한 예제
+- 브라우저에 접속하면 "hello World" 출력
+
+##### [결과]
+- 🏠 루트 URL /
+<img src="./img/app1.png" width="350">
+
+- 이름 URL /name
+<img src="/img/app1_age.png" width="350">
+
+- 🎂 나이 URL /age
+<img src="/img/app1_name.png" width="350">
+
+- [코드](/source/day7/app1.py)
+
+>**핵심 포인트**
+> @app.route('/경로')를 통해 요청 URL에 따른 페이지 응답을 설정 할 수 있음
+> h1 태그를 사용하여 HTML 형태로 텍스트 출력 가능
+> debug=True 로 설정하면 코드 수정 시 서버 재시작 없이 바로 반영 가능
+
+## 4. Flask + GPIO 웹 제어 - 웹에서 라즈베리파이 GPIO LED 제어
+- Flask 웹 서버와 Raspberry Pi의 GPIO를 연동해서 웹 페이지에서 LED를 켜고 끄는 실습
+
+#### 구현 방식
+##### - ✅ 방식 1: 고정 라우터(/led/on, /led/off)
+- ``/led/on`` 또는 ``/led/off`` 주소에 접속하면 LED가 제어된다
+##### - ✅ 방식 2: 동적 라우터(/led/<state>)
+- 하나의 라우트로 on, off 둘 다 처리
+- 방식 2 코드가 더 유연하고 확장성이 있다 
+#### 📸 실행 화면
+- [실행영상]()
+
+
+####  하고자 하는 기능 정리
+> ☑️ **/led/on 호출 시:**
+부저에서 학교 종소리 음계 1번만 연주
+LED 0 → 1 → 2번을 1.5초씩 켜고 차례로 넘어감
+LED 순환을 무한히 반복 (while 루프)
+
+> ☑️ **/led/off 호출 시:**
+무한 LED 루프 종료
+ledPins[2]만 1.5초 켰다가 꺼짐
+끝
+
+
+
+
+ 
