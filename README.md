@@ -473,7 +473,7 @@ GPIO.add_event_detect(swPin, GPIO.RISING, callback=printcallback, bouncetime=100
 # 7일차
 
 ## 1. Flask 웹 서버 실습 #1 - 간단한 라우팅
-- [결과]
+##### [결과]
     <img src="/img/app1.png" width="350">
 - [코드](/source/day7/appTest.py.py)
 > **핵심 포인트**
@@ -515,16 +515,38 @@ GPIO.add_event_detect(swPin, GPIO.RISING, callback=printcallback, bouncetime=100
 ## 4. Flask + GPIO 웹 제어 - 웹에서 라즈베리파이 GPIO LED 제어
 - Flask 웹 서버와 Raspberry Pi의 GPIO를 연동해서 웹 페이지에서 LED를 켜고 끄는 실습
 
-#### 구현 방식
+### 구현 방식
 ##### - ✅ 방식 1: 고정 라우터(/led/on, /led/off)
 - ``/led/on`` 또는 ``/led/off`` 주소에 접속하면 LED가 제어된다
 ##### - ✅ 방식 2: 동적 라우터(/led/<state>)
 - 하나의 라우트로 on, off 둘 다 처리
 - 방식 2 코드가 더 유연하고 확장성이 있다 
-#### 📸 실행 화면
+
+##### - ✅ 추가 기능: /led/clean
+- GPIO 핀 설정을 모두 초기화하여 자원 해제
+- 프로그램 종료 후 GPIO 상태를 깨끗하게 마무리할 때 사용 
+
+##### 🧹 /led/clean 라우트를 실행해야 하는 이유
+- 라즈베리파이에서 GPIO 핀은 설정 후에도 시스템에 남아있음
+- 프로그램이 종료되도 계속 사용 중 상태로 유지됨
+- ``/led/clean`` 라우트 통해 ``GPIO.cleanup()`` 을 실행하면 모든 핀 초기화
+- **다음 실행 시 충돌, 오작동 방지**  
+
+### ⚠️ 문제 발생 및 해결
+- 문제: GPIO 18번으로 설정했을 때 LED가 켜지지 않음
+
+- 원인: GPIO 18번은 기본적으로 PWM/오디오 기능이 할당된 핀으로, 단순 출력이 제한될 수 있음
+
+- 해결: GPIO 15번으로 변경 후 정상 작동
+
+> **TIPS** 단순 제어용 장치에는 일반 GPIO 핀(14, 15, 23 등)을 사용하는 것이 안정적임
+
+### 📸 실행 화면
 - [실행영상](https://github.com/user-attachments/assets/1df40ed8-f72d-45be-a964-4a077d59d49a)
 
+<hr>
 
+### 개인 실험 
 ####  하고자 하는 기능 정리
 > ☑️ **/led/on 호출 시:**
 부저에서 학교 종소리 음계 1번만 연주
@@ -536,7 +558,9 @@ LED 순환을 무한히 반복 (while 루프)
 ledPins[2]만 1.5초 켰다가 꺼짐
 끝
 
+<hr>
 
+## 8일차
 
 
  
