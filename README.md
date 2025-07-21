@@ -775,6 +775,9 @@ input 태그에 각각 name="name", name="phone", name="email" 속성을 명확�
 
 
 #### 🎥 실행화면
-[동영상]()
+[동영상](
+https://github.com/user-attachments/assets/112517c6-2d6f-43e4-b038-fc94bf2470d3
+)
+
 
 
