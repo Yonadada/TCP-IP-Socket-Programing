@@ -680,7 +680,7 @@ ledPins[2]만 1.5초 켰다가 꺼짐
 <hr>
 
 ## 8일차
-## 🧪 Flask + GPIO POST 방식 제어 – 웹 버튼으로 LED 제어 실습
+## 1.🧪 Flask + GPIO POST 방식 제어 – 웹 버튼으로 LED 제어 실습
 - HTML 폼의 버튼을 통해서 **POST 요청** 을 보냄
 - Flask  서버에서 요청을 받아 Rasberry Pi의 GPIO 핀을 제어하는 웹 애플리케이션을 구현
 
@@ -738,3 +738,43 @@ ledPins[2]만 1.5초 켰다가 꺼짐
 [동영상](
 https://github.com/user-attachments/assets/ee78b0fd-7e52-4c6b-8e77-72ef6b37a659
 )
+
+<hr>
+
+## 2.📘 Flask 기반 간단한 연락처 등록 웹 실습
+- 직원 정보 입력 시스템을 구현
+- 사용자는 이름, 전화번호, 이메일을 입력할 수 있으며 서버는 해당 데이터를 리스트에 저장한 후 응답 메시지를 반환
+
+### 🌐 웹 페이지 구조
+1) `/` (루트페이지)
+- 사용자가 입력을 위한 HTML 폼을 표시
+- `name`, `phone`, `email` 포함한 필드 형식
+
+2) `submit` (POST 처리)
+- 사용자 입력을 받아서 파이썬 리스트(`contacts`)에 저장
+- 저장된 정보를 화면에 출력, 루트로 돌아갈 수 있는 링크 제공
+
+### 💡코드 주요 설명
+📄 [코드](/source/day8/employer.py)
+- request.form.get() 을 통해서 HTML 폼 데이터를 받아옴 
+- 리스트 `contacts`에 사전 형태로 저장하고 서버 메모리상에 간단하게 유지
+
+📄[코드](./source/day8/templates/add.html)
+- 사용자 입력 유효성 확보(tel, email,...)
+
+### 🛠️ Troubleshooting – <input> 태그에 name 속성을 지정하지 않아 값이 출력되지 않는 문제
+##### 문제상황
+- 입력 폼 제출 후, 서버 측에서 `request.form.get()` 으로 받은 값이 `None` 으로 출력
+
+##### 원인분석
+- HTML input 태그에 `name` 속성이 누락되어 있음! 
+- Flask는 name 속성 값을 키로 사용해 폼 데이터를 request.form 에 저장하므로, 이 속성이 없으면 서버로 값이 전달되지 않음
+
+##### 해결방법 
+input 태그에 각각 name="name", name="phone", name="email" 속성을 명확하게 추가함으로써 문제 해결 
+
+
+#### 🎥 실행화면
+[동영상]()
+
+
